@@ -28,34 +28,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = [
-    const HomePage(),
-    const GenrePage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cartelera de Cine'),
       ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.movie), label: 'Cartelera'),
-          BottomNavigationBarItem(icon: Icon(Icons.category), label: 'Géneros'),
-        ],
-      ),
+      body: const HomePage(),
     );
   }
 }
@@ -85,7 +64,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Filtrar películas según el género seleccionado
     final filteredMovies = selectedGenre == 'Todos'
         ? movies
         : movies.where((movie) => movie['genre'] == selectedGenre).toList();
@@ -120,17 +98,42 @@ class _HomePageState extends State<HomePage> {
                 final movie = filteredMovies[index];
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListTile(
-                    leading: Image.asset(movie['image'], width: 50),
-                    title: Text(
-                      movie['title'],
-                      style: GoogleFonts.getFont(
-                        movie['font'],
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.asset(
+                            movie['image'],
+                            width: 120,
+                            height: 150,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                movie['title'],
+                                style: GoogleFonts.getFont(
+                                  movie['font'],
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Género: ${movie['genre']}',
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    subtitle: Text('Género: ${movie['genre']}'),
                   ),
                 );
               },
@@ -138,40 +141,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class GenrePage extends StatelessWidget {
-  const GenrePage({super.key});
-
-  final List<Map<String, dynamic>> genres = const [
-    {'name': 'Acción', 'icon': Icons.local_fire_department},
-    {'name': 'Animación', 'icon': Icons.animation},
-    {'name': 'Ciencia ficción', 'icon': Icons.science},
-    {'name': 'Drama', 'icon': Icons.theater_comedy},
-    {'name': 'Comedia', 'icon': Icons.emoji_emotions},
-    {'name': 'Terror', 'icon': Icons.warning},
-    {'name': 'Romance', 'icon': Icons.favorite},
-    {'name': 'Aventura', 'icon': Icons.explore},
-    {'name': 'Fantasía', 'icon': Icons.auto_awesome},
-    {'name': 'Documental', 'icon': Icons.book},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: genres.length,
-      itemBuilder: (context, index) {
-        final genre = genres[index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          child: ListTile(
-            leading: Icon(genre['icon'], color: Colors.deepPurple),
-            title: Text(genre['name']),
-          ),
-        );
-      },
     );
   }
 }
